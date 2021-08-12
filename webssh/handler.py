@@ -7,6 +7,7 @@ import traceback
 import weakref
 import paramiko
 import tornado.web
+import time
 
 from concurrent.futures import ThreadPoolExecutor
 from tornado.ioloop import IOLoop
@@ -431,6 +432,13 @@ class IndexHandler(MixinHandler, tornado.web.RequestHandler):
             except paramiko.SSHException as exc:
                 logging.info(str(exc))
             else:
+                timeout = 1
+                endtime = time.time() + timeout
+                while not stdout.channel.eof_received:
+                    time.sleep(1)
+                    if time.time() > endtime:
+                        stdout.channel.close()
+                        break
                 data = stdout.read()
                 logging.debug('{!r} => {!r}'.format(command, data))
                 result = self.parse_encoding(data)
