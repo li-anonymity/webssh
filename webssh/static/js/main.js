@@ -536,7 +536,7 @@ jQuery(function($){
         setTimeout(function () {
           after_login_command = {};
         }, after_login_command_time*1000);
-        after_login_command = JSON.parse(decodeURIComponent(url_opts_data.command))
+        after_login_command = JSON.parse(window.atob(url_opts_data.command))
       }
     };
 
